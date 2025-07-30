@@ -31,7 +31,7 @@ def parse_html_file(filepath):
                 stop_name = next_b.get_text(strip=True)
                 break
 
-    print(f"✅ Nazwa przystanku: {stop_name}")
+    print(f"  Nazwa przystanku: {stop_name}")
 
     text = tyt1.get_text(" ", strip=True)
 
@@ -39,7 +39,7 @@ def parse_html_file(filepath):
     linia_match = re.search(r'Linia\s+(\d+)', text)
     linia_number = linia_match.group(1) if linia_match else "???"
 
-    print(f"✅ Linia: {linia_number}")
+    print(f"  Linia: {linia_number}")
 
     text = tyt1.get_text(" ", strip=True)
 
@@ -47,7 +47,7 @@ def parse_html_file(filepath):
     kierunek_match = re.search(r'kierunek:\s*(.*)', text, re.IGNORECASE)
     kierunek = kierunek_match.group(1).strip() if kierunek_match else "???"
 
-    print(f"✅ Kierunek: {kierunek}")
+    print(f"  Kierunek: {kierunek}")
 
 
 
@@ -58,7 +58,7 @@ def parse_html_file(filepath):
         print("❌ Nie znaleziono tyt2 (nagłówek z dniami tygodnia)")
         return []
 
-    print(f"✅ tyt2: {tyt2.get_text(strip=True)}")
+    print(f"  tyt2: {tyt2.get_text(strip=True)}")
 
     if 'robocze' not in tyt2.get_text(strip=True).lower():
         print("❌ tyt2 nie zawiera słowa 'robocze'")
@@ -67,7 +67,7 @@ def parse_html_file(filepath):
     tabela = tyt2.find_parent('table')
     rows = soup.find_all('tr',attrs= {"align":lambda val: val and val.lower() == "center"})
     # <TR ALIGN="CENTER">
-    #print(f"✅ znaleziono {len(rows)} wierszy align=center")
+    #print(f"  znaleziono {len(rows)} wierszy align=center")
     #print(f"Rows: {rows}")
         
 
@@ -179,7 +179,7 @@ if __name__ == '__main__':
     for linia_folder in sorted(os.listdir(BASE_DIR)):
         subpath = os.path.join(BASE_DIR, linia_folder)
         if os.path.isdir(subpath):
-            print(f"\n📂 Przetwarzanie folderu: {linia_folder}")
+            print(f"\nPrzetwarzanie folderu: {linia_folder}")
             dane = parse_all_html_in_folder(subpath)
             all_dane.extend(dane)
 
@@ -191,6 +191,6 @@ if __name__ == '__main__':
 
 
 
-    print(f"\n✅ Łącznie odczytano {len(all_dane)} przystanków.")
+    print(f"\n  Łącznie odczytano {len(all_dane)} przystanków.")
     save_to_json(all_dane, filename='rozklad_zbiorczy.json')
 

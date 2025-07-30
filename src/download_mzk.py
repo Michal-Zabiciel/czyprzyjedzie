@@ -13,12 +13,12 @@ def download_line_8_stops():
 
     # Load main line page
     index_url = urljoin(BASE_URL, INDEX_FILE)
-    print(f"📥 Downloading index: {index_url}")
+    print(f"Downloading index: {index_url}")
     response = requests.get(index_url)
     response.encoding = 'iso-8859-2'
 
     if response.status_code != 200:
-        print(f"❌ Failed to load index page: {response.status_code}")
+        print(f"Failed to load index page: {response.status_code}")
         return
 
     soup = BeautifulSoup(response.text, 'html.parser')
@@ -32,14 +32,14 @@ def download_line_8_stops():
         if href.lower().endswith('.htm') and href.lower().startswith('0008t'):
             stop_files.add(href)
 
-    print(f"🔗 Found {len(stop_files)} stop files.")
+    print(f"Found {len(stop_files)} stop files.")
 
     for href in sorted(stop_files):
         full_url = urljoin(index_url, href)
         filename = os.path.basename(href)
         save_path = os.path.join(SAVE_DIR, filename)
 
-        print(f"⬇️  Downloading {href} → {filename}")
+        print(f"Downloading {href} → {filename}")
         file_resp = requests.get(full_url)
         file_resp.encoding = 'iso-8859-2'
 
@@ -47,9 +47,9 @@ def download_line_8_stops():
             with open(save_path, 'w', encoding='iso-8859-2') as f:
                 f.write(file_resp.text)
         else:
-            print(f"⚠️  Failed to fetch {href}: {file_resp.status_code}")
+            print(f"Failed to fetch {href}: {file_resp.status_code}")
 
-    print("✅ All stops downloaded for Linia 8.")
+    print("  All stops downloaded for Linia 8.")
 
 
 BASE_URL = "https://www.mzk.zamosc.pl/pliki/rozklad/"
@@ -64,15 +64,15 @@ def download_all_lines(from_line=0, to_line=56):
         save_dir = os.path.join(SAVE_BASE_DIR, f"linia_{line_id}")
         os.makedirs(save_dir, exist_ok=True)
 
-        print(f"\n📥 Downloading index for linia {line_id}: {index_url}")
+        print(f"Downloading index for linia {line_id}: {index_url}\n")
         try:
             response = requests.get(index_url)
             response.encoding = 'iso-8859-2'
             if response.status_code != 200:
-                print(f"❌ Failed to load {index_url}: {response.status_code}")
+                print(f"Failed to load {index_url}: {response.status_code}")
                 continue
         except Exception as e:
-            print(f"⚠️  Error requesting {index_url}: {e}")
+            print(f"Error requesting {index_url}: {e}")
             continue
 
         soup = BeautifulSoup(response.text, 'html.parser')
@@ -84,7 +84,7 @@ def download_all_lines(from_line=0, to_line=56):
             if href.lower().endswith('.htm') and href.lower().startswith(f"{line_id}t"):
                 stop_files.add(href)
 
-        print(f"🔗 Found {len(stop_files)} stop files for line {line_id}")
+        print(f"Found {len(stop_files)} stop files for line {line_id}")
 
         for href in sorted(stop_files):
             full_url = urljoin(index_url, href)
@@ -97,12 +97,12 @@ def download_all_lines(from_line=0, to_line=56):
                 if file_resp.status_code == 200:
                     with open(save_path, 'w', encoding='iso-8859-2') as f:
                         f.write(file_resp.text)
-                    print(f"✅ Saved {filename}")
+                    print(f"  Saved {filename}")
                 else:
-                    print(f"❌ Failed to fetch {href}: {file_resp.status_code}")
+                    print(f"Failed to fetch {href}: {file_resp.status_code}")
             except Exception as e:
-                print(f"⚠️  Error fetching {href}: {e}")
+                print(f"Error fetching {href}: {e}")
 
-    print("\n🏁 Done downloading all available line schedules.")
+    print("\nDone downloading all available line schedules.")
 
 download_all_lines(0, 56)
